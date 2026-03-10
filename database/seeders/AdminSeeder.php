@@ -22,7 +22,7 @@ class AdminSeeder extends Seeder
         $admin->email ='admin@admin.com';
 
         $admin->password = $password;
-        $admin->status =1;
+        $admin->status = 1;
         $admin->save();
     }
 }

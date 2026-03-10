@@ -34,27 +34,25 @@
                     <a href="#" class="nav-link active">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
-                            Dashboard
+                            Admin Management
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="./index.html" class="nav-link active">
-                                <i class="nav-icon bi bi-circle"></i>
-                                <p>Dashboard v1</p>
+                            <a href="{{url('admin/dashboard')}}"
+                               class="nav-link {{(Session::get('page') == 'dashboard') ? 'active' : ''}}">
+                                <i class="nav-icon bi bi-house"></i>
+
+                                <p>Dashboard </p>
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a href="./index2.html" class="nav-link">
-                                <i class="nav-icon bi bi-circle"></i>
-                                <p>Dashboard v2</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="./index3.html" class="nav-link">
-                                <i class="nav-icon bi bi-circle"></i>
-                                <p>Dashboard v3</p>
+                            <a href="{{url('admin/update-password')}}"
+                               class="nav-link {{(Session::get('page') == 'update-password') ? 'active' : ''}}">
+                                <i class="nav-icon bi bi-database-up"></i>
+                                <p>Update Password</p>
                             </a>
                         </li>
                     </ul>
