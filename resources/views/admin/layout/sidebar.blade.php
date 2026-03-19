@@ -50,9 +50,25 @@
 
                         <li class="nav-item">
                             <a href="{{url('admin/update-password')}}"
-                               class="nav-link {{(Session::get('page') == 'update-password') ? 'active' : ''}}">
+                               class="nav-link {{(Session::get('page') == 'update-password' )? 'active' : ''}}">
                                 <i class="nav-icon bi bi-database-up"></i>
                                 <p>Update Password</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('admin/update-details')}}"
+                               class="nav-link {{(Session::get('page') == 'update-details') ? 'active' : ''}}">
+                                <i class="nav-icon bi bi-database-up"></i>
+                                <p>Update Profile Details</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('admin/subAdmins')}}"
+                               class="nav-link {{(Session::get('page') == 'subAdmins') ? 'active' : ''}}">
+                                <i class="nav-icon bi bi-database-up"></i>
+                                <p>subAdmins</p>
                             </a>
                         </li>
                     </ul>

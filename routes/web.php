@@ -11,7 +11,9 @@ Route::get('/', function () {
 
 Route::prefix('admin')->group(function () {
     route::get('login', [AdminController::class, 'create'])->name('admin.login');
+
     route::post('login', [AdminController::class, 'store'])->name('admin.login.request');
+
     Route::group(['middleware' => 'admin'], function () {
         //Dashboard
         Route::resource('dashboard', AdminController::class)->only('index');
@@ -26,6 +28,26 @@ Route::prefix('admin')->group(function () {
         Route::get('update-details', [AdminController::class, 'editDetails'])->name('admin.update_details');
 
        Route::post('update-details', [AdminController::class, 'updateDetails'])->name('admin.update_details.request');
+       //Delete Profile Image
+        Route::post('delete-details', [AdminController::class, 'deleteProfileImage']);
+
+
+        //SubAdmins
+        Route::get('subAdmins', [AdminController::class, 'subAdmins'])->name('admin.subAdmins');
+
+        //update subadmin status
+        Route::post('update-subadmin-status', [AdminController::class, 'updateSubAdminsStatus']);
+        //delete subadmin status
+        Route::get('delete-subadmin/{id}', [AdminController::class, 'deleteSubAdmin']);
+       //add or edit subadmin
+        Route::get('add-edit-subadmin/{id?}', [AdminController::class, 'editSubAdmin']);
+
+
+        Route::post('/update-role/{id?}', [AdminController::class, 'UpdateRole']);
+        Route::post('/update-role/request}', [AdminController::class, 'UpdateRoleRequest']);
+
+
+        Route::post('add-edit-subadmin/request', [AdminController::class, 'addEditSubAdminRequest']);
         //Admin logout
         Route::get('logout', [AdminController::class, 'destroy'])->name('admin.logout');
     });

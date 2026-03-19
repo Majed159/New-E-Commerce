@@ -56,58 +56,53 @@
                             @endforeach
 
 
-
-
-
-
-
-
-
-
-
-
-                            <form method="post" action="{{route('admin.update_details.request')}}" enctype="multipart/form-data">@csrf
-                                {{--   begin-Body--}}
+                            <form name="subadminForm" id="subadminForm" action="{{url('admin/add-edit-subadmin/request')}}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                @if(!empty($subadmindata['id']))
+                                    <input type="hidden" name="id" value="{{$subadmindata['id']}}">
+                                @endif
                                 <div class="card-body">
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email address</label>
-                                        <input type="email" class="form-control" id="email" value="{{Auth::guard('admin')->user()->email}}" readonly style="background-color: #ccc">
-
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" @if(!empty($subadmindata['email']))
+                                           value="{{$subadmindata['email']}}" readonly style="background-color: #ccc";
+                                        @endif>
                                     </div>
-
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password">
+                                    </div>
 
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="name"  name="name" value="{{Auth::guard('admin')->user()->name}}" >
-
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter Your name"
+                                        @if(!empty($subadmindata['name'])) value="{{$subadmindata['name']}}" @endif
+                                        >
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="phone" class="form-label">Phone</label>
-                                        <input type="text" class="form-control" id="phone" name="phone" value="{{Auth::guard('admin')->user()->phone}}">
-
+                                        <label for="Phone" class="form-label">Phone</label>
+                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Your Phone number"
+                                               @if(!empty($subadmindata['phone'])) value="{{$subadmindata['phone']}}" @endif
+                                        >
                                     </div>
+
                                     <div class="mb-3">
-                                        <label for="image" class="form-label">image</label>
-                                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                        @if(!empty(Auth::guard('admin')->user()->image))
-                                            <div id="profileImageBlock">
-                                                <a target="_blank" href="{{ url('admin/images/photos/' . Auth::guard('admin')->user()->image) }}">View</a>|
-                                                <input type="hidden" name="current_image" value="{{Auth::guard('admin')->user()->image}}">
-                                                <a href="javascript:void(0)" id="deleteProfileImage" data-admin-id="{{ Auth::guard('admin')->user()->id }}" class="text-danger" >Delete</a>
-
-                                            </div>
-
+                                        <label for="image" class="form-label">Image</label>
+                                        <input type="file" class="form-control" id="image" name="image" placeholder="Please Upload Your Image" accept="image/*"
+                                        >
+                                        @if(!empty($subadmindata['image']))
+                                            <a href="{{asset('admin/images/photos/'.$subadmindata['image'])}}">View Photo</a>
+                                            <input type="hidden" name="current_image" value="{{$subadmindata['image']}}">
                                         @endif
+
                                     </div>
-                                </div>
 
-                                {{--   end:Body--}}
-                                {{--  Start:Footer--}}
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
 
+                                </div>
                             </form>
                         </div>
                     </div>

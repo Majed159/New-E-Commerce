@@ -24,6 +24,7 @@ class DetailRequest extends FormRequest
         return [
             'name' => 'required|regex:/^[\pL\s\-]+$/u|max:255',
             'phone' => 'required|numeric|digits_between:10,11',
+            'image ' =>'image',
         ];
     }
     public function messages(): array
@@ -35,6 +36,7 @@ class DetailRequest extends FormRequest
             'phone.digits_between' => 'Valid Phone number is required',
             'phone.required' => 'Phone number is required',
             'phone.numeric' => 'Phone number must be a number',
+            'image.image' => 'Valid image is required',
 
         ];
     }

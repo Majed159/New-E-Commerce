@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\PasswordRequest;
+use App\Http\Requests\Admin\SubadminRequest;
 use App\Http\Services\Admin\AdminService;
 use App\http\Requests\Admin\DetailRequest;
 use App\Models\Admin;
+use App\Models\AdminsRole;
 use Session;
 use Illuminate\Http\Request;
 use Auth;
@@ -55,12 +57,14 @@ class AdminController extends Controller
         $data = $request->all();
 
         $loginStatus =$this->adminService->login($data);
-        if ($loginStatus == 1) {
+        if ($loginStatus == "success") {
             return redirect()->route('dashboard.index');
 
-        }else{
-            return redirect('admin/login')->with('error_message', 'Invalid Email or Password');
+        }elseif ($loginStatus == "inactive") {
+            return redirect('admin/login')->with('error_message', 'Your account is not activated, please contact your administrator');
 
+        }else{
+            return redirect()->route('admin.login')->with('error_message', 'Wrong Email or password');
         }
 }
 
@@ -122,7 +126,7 @@ class AdminController extends Controller
         return view('admin.update_details');
     }
 
-    public function updateDetails(DetailRequest $request): ?\Illuminate\Http\RedirectResponse
+    public function updateDetails(DetailRequest $request)
     {
         \Illuminate\Support\Facades\Session::put('page', 'update_details');
         if ($request->isMethod('post')) {
@@ -131,6 +135,82 @@ class AdminController extends Controller
         }
 
     }
+    public  function  deleteProfileImage(Request $request){
 
 
+    $status = $this->adminService->deleteProfileImage($request->admin_id);
+    return response()->json($status);
+
+    }
+public  function subAdmins()
+{
+    Session::put('page','sub-admins');
+    $subadmins = $this->adminService->subAdmins();
+    return view('admin.subAdmins.sub-admins', compact('subadmins'));
+}
+
+public  function updateSubAdminsStatus(Request $request)
+{
+//    if ($request->ajax(){
+//    $data = $request->all();
+//    $status = $this->adminService->updateSubAdminsStatus($data);
+//    return response()->json(['status'=>$status,'subadmin_id'=>$data['subadmin_id']]);
+//
+//    }
+
+    if ($request->ajax())
+    {
+        $data = $request->all();
+        $status = $this->adminService->updateSubAdminsStatus($data);
+          return response()->json(['status'=>$status,'subadmin_id'=>$data['subadmin_id']]);
+
+    }
+
+
+}
+
+
+    public  function deleteSubAdmin( $id)
+    {
+    $result =$this->adminService->deleteSubAdmin($id);
+    return redirect()->route('admin.subAdmins')->with('success_message', $result['message']);
+    }
+    public  function editSubAdmin($id =null)
+    {
+    if ($id == ""){
+        $title = "Add New SubAdmin";
+        $subadmindata = array();
+    }else{
+        $title = "Edit SubAdmin";
+        $subadmindata = Admin::find($id);
+    }
+    return view('admin.subAdmins.edit_subadmin', compact('title','subadmindata'));
+    }
+
+
+    public  function  addEditSubAdminRequest(SubadminRequest $request)
+    {
+        if ($request->isMethod('post')) {
+            $result = $this->adminService->addEditSubadmin($request);
+            return redirect('admin/subAdmins')->with('success_message', $result['message']);
+        }
+    }
+
+    public function UpdateRole($id)
+    {
+            $subadminRoles = AdminsRole::where('subadmin_id',$id)->get()->toArray();
+            $subadminDetails = Admin::where('id',$id)->first()->toArray();
+            $title = "Update".$subadminDetails['name']." Subadmin Roles/Permissions";
+            return view('admin.subAdmins.update_roles', compact('title','id','subadminRoles'));
+    }
+
+    public  function UpdateRoleRequest(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $data = $request->all();
+            $service = new AdminService();
+            $request=$service->updateRole($request);
+            return redirect('admin/subAdmins')->with('success_message', $request['message']);
+        }
+    }
 }

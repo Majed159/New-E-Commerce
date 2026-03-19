@@ -24,5 +24,22 @@ class AdminSeeder extends Seeder
         $admin->password = $password;
         $admin->status = 1;
         $admin->save();
+         $admin = new Admin();
+         $admin->name = 'Sub Admin';
+        $admin->role = 'Sub_Admin';
+        $admin->phone = '0123456789';
+        $admin->email ='SubAdmin@admin.com';
+        $admin->password = $password;
+        $admin->status = 1;
+        $admin->save();
+
+        $admin = new Admin();
+        $admin->name = 'Sub Admin 2';
+        $admin->role = 'Sub_Admin';
+        $admin->phone = '0123456789';
+        $admin->email ='SubAdmin2@admin.com';
+        $admin->password = $password;
+        $admin->status = 1;
+        $admin->save();
     }
 }
