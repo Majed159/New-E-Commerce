@@ -43,6 +43,8 @@
                                         <th>Photo</th>
                                         <th>Name</th>
                                         <th>Phone</th>
+                                        <th>Permissions for</th>
+                                        <th>Permission Type</th>
                                         <th>Email</th>
                                         <th>Actions</th>
 
@@ -61,6 +63,37 @@
                                             </td>
                                             <td>{{$subadmin->name}}</td>
                                             <td>{{$subadmin->phone}}</td>
+                                            @php
+                                                $roles = $subadmin->roles ?? collect();
+                                                $moduleNames = [];
+                                                $typeLabels = [];
+                                                foreach ($roles as $role) {
+                                                    $moduleNames[] = ucfirst($role->module);
+                                                    $labels = [];
+                                                    if (!empty($role->view_access)) $labels[] = 'View';
+                                                    if (!empty($role->edit_access)) $labels[] = 'Edit';
+                                                    if (!empty($role->full_access)) $labels[] = 'Full';
+                                                    $typeLabels[] = empty($labels) ? 'None' : implode('/', $labels);
+                                                }
+                                            @endphp
+                                            <td>
+                                                @if($roles->isEmpty())
+                                                    <span class="text-muted">None</span>
+                                                @else
+                                                    @foreach($moduleNames as $moduleName)
+                                                        <div>{{ $moduleName }}</div>
+                                                    @endforeach
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($roles->isEmpty())
+                                                    <span class="text-muted">None</span>
+                                                @else
+                                                    @foreach($typeLabels as $typeLabel)
+                                                        <div>{{ $typeLabel }}</div>
+                                                    @endforeach
+                                                @endif
+                                            </td>
                                             <td>{{$subadmin->email}}</td>
                                             <td>
 

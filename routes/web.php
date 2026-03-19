@@ -43,8 +43,8 @@ Route::prefix('admin')->group(function () {
         Route::get('add-edit-subadmin/{id?}', [AdminController::class, 'editSubAdmin']);
 
 
-        Route::post('/update-role/{id?}', [AdminController::class, 'UpdateRole']);
-        Route::post('/update-role/request}', [AdminController::class, 'UpdateRoleRequest']);
+        Route::get('update-role/{id?}', [AdminController::class, 'UpdateRole'])->name('admin.update_role');
+        Route::post('update-role/request', [AdminController::class, 'UpdateRoleRequest'])->name('admin.update_role.request');
 
 
         Route::post('add-edit-subadmin/request', [AdminController::class, 'addEditSubAdminRequest']);

@@ -198,10 +198,11 @@ public  function updateSubAdminsStatus(Request $request)
 
     public function UpdateRole($id)
     {
-            $subadminRoles = AdminsRole::where('subadmin_id',$id)->get()->toArray();
+            $subadminRoles = AdminsRole::where('subAdminId',$id)->get()->toArray();
             $subadminDetails = Admin::where('id',$id)->first()->toArray();
-            $title = "Update".$subadminDetails['name']." Subadmin Roles/Permissions";
-            return view('admin.subAdmins.update_roles', compact('title','id','subadminRoles'));
+            $modules=['categories','products','orders','users','subscribers'];
+            $title = "Update ".$subadminDetails['name']." Subadmin Roles/Permissions";
+            return view('admin.subAdmins.update_roles', compact('title','id','subadminRoles','modules'));
     }
 
     public  function UpdateRoleRequest(Request $request)
@@ -210,7 +211,8 @@ public  function updateSubAdminsStatus(Request $request)
             $data = $request->all();
             $service = new AdminService();
             $request=$service->updateRole($request);
-            return redirect('admin/subAdmins')->with('success_message', $request['message']);
         }
+        return redirect('admin/subAdmins')->with('success_message', $request['message']);
+
     }
 }

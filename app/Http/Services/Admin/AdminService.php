@@ -2,6 +2,7 @@
 namespace  App\Http\Services\Admin;
 use App\Http\Requests\Admin\DetailRequest;
 use App\Models\Admin;
+use App\Models\AdminsRole;
 use App\Models\User;
 use Auth,Hash;
 use Illuminate\Support\Facades\Session;
@@ -134,7 +135,7 @@ class AdminService
 
     public function subAdmins()
     {
-        $subadmins = Admin::whereIn('role', ['Sub_Admin'])->get();
+        $subadmins = Admin::whereIn('role', ['Sub_Admin'])->with('roles')->get();
         return $subadmins;
     }
 
@@ -207,6 +208,42 @@ class AdminService
         $subadmindata->save();
         return ['message' => $message];
     }
+
+    public function updateRole($request)
+    {
+        $data = $request->all();
+        $subAdminId = $data['subAdminId'] ?? $data['subadmin_id'] ?? null;
+        if (empty($subAdminId)) {
+            return ['message' => 'Sub-admin id is required.'];
+        }
+
+        AdminsRole::where('subAdminId', $subAdminId)->delete();
+
+        $roles = $data['roles'] ?? [];
+        foreach ($roles as $role) {
+            if (empty($role)) {
+                continue;
+            }
+            $module = $role['module'] ?? null;
+            if (empty($module)) {
+                continue;
+            }
+
+            $view = !empty($role['view']) ? 1 : 0;
+            $edit = !empty($role['edit']) ? 1 : 0;
+            $full = !empty($role['full']) ? 1 : 0;
+
+            AdminsRole::insert([
+                'subAdminId' => $subAdminId,
+                'module' => $module,
+                'view_access' => $view,
+                'edit_access' => $edit,
+                'full_access' => $full,
+            ]);
+        }
+
+        return ['message' => 'Role updated successfully!'];
     }
+}
 
 
