@@ -46,15 +46,18 @@
 ></script>
 <!-- sortablejs -->
 <script>
-    new Sortable(document.querySelector('.connectedSortable'), {
-        group: 'shared',
-        handle: '.card-header',
-    });
+    const sortableEl = document.querySelector('.connectedSortable');
+    if (sortableEl && window.Sortable) {
+        new Sortable(sortableEl, {
+            group: 'shared',
+            handle: '.card-header',
+        });
 
-    const cardHeaders = document.querySelectorAll('.connectedSortable .card-header');
-    cardHeaders.forEach((cardHeader) => {
-        cardHeader.style.cursor = 'move';
-    });
+        const cardHeaders = document.querySelectorAll('.connectedSortable .card-header');
+        cardHeaders.forEach((cardHeader) => {
+            cardHeader.style.cursor = 'move';
+        });
+    }
 </script>
 <!-- apexcharts -->
 <script
@@ -115,11 +118,14 @@
         },
     };
 
-    const sales_chart = new ApexCharts(
-        document.querySelector('#revenue-chart'),
-        sales_chart_options,
-    );
-    sales_chart.render();
+    const revenueChartEl = document.querySelector('#revenue-chart');
+    if (revenueChartEl && window.ApexCharts) {
+        const sales_chart = new ApexCharts(
+            revenueChartEl,
+            sales_chart_options,
+        );
+        sales_chart.render();
+    }
 </script>
 <!-- jsvectormap -->
 <script
@@ -135,10 +141,13 @@
 <!-- jsvectormap -->
 <script>
     // World map by jsVectorMap
-    new jsVectorMap({
-        selector: '#world-map',
-        map: 'world',
-    });
+    const worldMapEl = document.querySelector('#world-map');
+    if (worldMapEl && window.jsVectorMap) {
+        new jsVectorMap({
+            selector: '#world-map',
+            map: 'world',
+        });
+    }
 
     // Sparkline charts
     const option_sparkline1 = {
@@ -166,8 +175,11 @@
         colors: ['#DCE6EC'],
     };
 
-    const sparkline1 = new ApexCharts(document.querySelector('#sparkline-1'), option_sparkline1);
-    sparkline1.render();
+    const sparkline1El = document.querySelector('#sparkline-1');
+    if (sparkline1El && window.ApexCharts) {
+        const sparkline1 = new ApexCharts(sparkline1El, option_sparkline1);
+        sparkline1.render();
+    }
 
     const option_sparkline2 = {
         series: [
@@ -194,8 +206,11 @@
         colors: ['#DCE6EC'],
     };
 
-    const sparkline2 = new ApexCharts(document.querySelector('#sparkline-2'), option_sparkline2);
-    sparkline2.render();
+    const sparkline2El = document.querySelector('#sparkline-2');
+    if (sparkline2El && window.ApexCharts) {
+        const sparkline2 = new ApexCharts(sparkline2El, option_sparkline2);
+        sparkline2.render();
+    }
 
     const option_sparkline3 = {
         series: [
@@ -222,10 +237,24 @@
         colors: ['#DCE6EC'],
     };
 
-    const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
-    sparkline3.render();
+    const sparkline3El = document.querySelector('#sparkline-3');
+    if (sparkline3El && window.ApexCharts) {
+        const sparkline3 = new ApexCharts(sparkline3El, option_sparkline3);
+        sparkline3.render();
+    }
 </script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/jqT3SQfawRcv/BIHPTHkBvs0ovtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="{{url('admin/js/jquery-3.7.1.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 <script src="{{url('admin/js/Custom.js')}}"></script>
+<!--Datatable -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css"/>
+<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function (){
+        $("#Category").DataTable();
+
+       $("#subadmins").DataTable();
+    });
+
+</script>

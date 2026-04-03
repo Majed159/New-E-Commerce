@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Auth;
 
 class Admin
 {
@@ -15,9 +16,22 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-      if (!Auth()->guard('admin')->check()) {
-          return redirect()->route('admin.login');
-      }
-      return $next($request);
+        $guard = Auth::guard('admin');
+        if (!$guard->check()) {
+            return redirect()->route('admin.login');
+        }
+
+        $admin = $guard->user();
+        if (!$admin || (int)$admin->status !== 1) {
+            $guard->logout();
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Account is inactive.'], 403);
+            }
+            return redirect()
+                ->route('admin.login')
+                ->with('error_message', 'Your account has been deactivated. Please contact your administrator.');
+        }
+
+        return $next($request);
     }
 }

@@ -64,13 +64,36 @@
                             </a>
                         </li>
 
+                        @if(Auth::guard('admin')->user()->type == 'admin')
+                            <li class="nav-item">
+                                <a href="{{url('admin/subAdmins')}}"
+                                   class="nav-link {{(Session::get('page') == 'subAdmins') ? 'active' : ''}}">
+                                    <i class="nav-icon bi bi-database-up"></i>
+                                    <p>subAdmins</p>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+                <li class="nav-item menu-open">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon bi bi-speedometer"></i>
+                        <p>
+                            Category Management
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{url('admin/subAdmins')}}"
-                               class="nav-link {{(Session::get('page') == 'subAdmins') ? 'active' : ''}}">
-                                <i class="nav-icon bi bi-database-up"></i>
-                                <p>subAdmins</p>
+                            <a href="{{url('admin/categories')}}"
+                               class="nav-link {{(Session::get('page') == 'Category') ? 'active' : ''}}">
+                                <i class="nav-icon bi bi-house"></i>
+
+                                <p>Category </p>
                             </a>
                         </li>
+
+
                     </ul>
                 </li>
                 <li class="nav-item">

@@ -13,6 +13,9 @@ use App\Models\AdminsRole;
 use Session;
 use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class AdminController extends Controller
 {
@@ -67,6 +70,89 @@ class AdminController extends Controller
             return redirect()->route('admin.login')->with('error_message', 'Wrong Email or password');
         }
 }
+
+    public function redirectToProvider(string $provider)
+    {
+        $this->ensureProvider($provider);
+
+        $driver = Socialite::driver($provider);
+        if ($provider === 'facebook') {
+            $driver->scopes(['email']);
+        }
+
+        return $driver->redirect();
+    }
+
+    public function handleProviderCallback(string $provider)
+    {
+        $this->ensureProvider($provider);
+
+        try {
+            $driver = Socialite::driver($provider);
+            if ($provider === 'facebook') {
+                $driver->scopes(['email']);
+            }
+            $socialUser = $driver->user();
+        } catch (\Throwable $e) {
+            return redirect()
+                ->route('admin.login')
+                ->with('error_message', 'Unable to login using ' . ucfirst($provider) . '. Please try again.');
+        }
+
+        $providerColumn = $provider === 'google' ? 'google_id' : 'facebook_id';
+        $providerId = $socialUser->getId();
+        $email = $socialUser->getEmail();
+
+        $admin = null;
+        if (!empty($providerId)) {
+            $admin = Admin::where($providerColumn, $providerId)->first();
+        }
+        if (!$admin && !empty($email)) {
+            $admin = Admin::where('email', $email)->first();
+        }
+        if (!$admin && empty($email)) {
+            return redirect()
+                ->route('admin.login')
+                ->with('error_message', ucfirst($provider) . ' did not return an email address.');
+        }
+
+        if (!$admin) {
+            $admin = new Admin();
+            $admin->name = $socialUser->getName() ?: $socialUser->getNickname() ?: 'Admin';
+            $admin->email = $email;
+            $admin->phone = '';
+            $admin->role = 'Sub_Admin';
+            $admin->status = 0;
+            $admin->password = Hash::make(Str::random(32));
+        }
+
+        if (!empty($providerId)) {
+            $admin->{$providerColumn} = $providerId;
+        }
+
+        $avatar = $socialUser->getAvatar();
+        if (!empty($avatar)) {
+            $admin->avatar_url = $avatar;
+        }
+
+        $admin->save();
+
+        if ((int)$admin->status === 0) {
+            return redirect()
+                ->route('admin.login')
+                ->with('error_message', 'Your account is pending approval. Please contact your administrator.');
+        }
+
+        Auth::guard('admin')->login($admin, true);
+        return redirect()->route('dashboard.index');
+    }
+
+    private function ensureProvider(string $provider): void
+    {
+        if (!in_array($provider, ['google', 'facebook'], true)) {
+            abort(404);
+        }
+    }
 
     /**
      * Display the specified resource.
@@ -144,6 +230,9 @@ class AdminController extends Controller
     }
 public  function subAdmins()
 {
+    if ($response = $this->ensureAdminRole()) {
+        return $response;
+    }
     Session::put('page','sub-admins');
     $subadmins = $this->adminService->subAdmins();
     return view('admin.subAdmins.sub-admins', compact('subadmins'));
@@ -151,6 +240,9 @@ public  function subAdmins()
 
 public  function updateSubAdminsStatus(Request $request)
 {
+    if ($response = $this->ensureAdminRole()) {
+        return $response;
+    }
 //    if ($request->ajax(){
 //    $data = $request->all();
 //    $status = $this->adminService->updateSubAdminsStatus($data);
@@ -172,11 +264,17 @@ public  function updateSubAdminsStatus(Request $request)
 
     public  function deleteSubAdmin( $id)
     {
+    if ($response = $this->ensureAdminRole()) {
+        return $response;
+    }
     $result =$this->adminService->deleteSubAdmin($id);
     return redirect()->route('admin.subAdmins')->with('success_message', $result['message']);
     }
     public  function editSubAdmin($id =null)
     {
+    if ($response = $this->ensureAdminRole()) {
+        return $response;
+    }
     if ($id == ""){
         $title = "Add New SubAdmin";
         $subadmindata = array();
@@ -190,6 +288,9 @@ public  function updateSubAdminsStatus(Request $request)
 
     public  function  addEditSubAdminRequest(SubadminRequest $request)
     {
+        if ($response = $this->ensureAdminRole()) {
+            return $response;
+        }
         if ($request->isMethod('post')) {
             $result = $this->adminService->addEditSubadmin($request);
             return redirect('admin/subAdmins')->with('success_message', $result['message']);
@@ -198,6 +299,9 @@ public  function updateSubAdminsStatus(Request $request)
 
     public function UpdateRole($id)
     {
+            if ($response = $this->ensureAdminRole()) {
+                return $response;
+            }
             $subadminRoles = AdminsRole::where('subAdminId',$id)->get()->toArray();
             $subadminDetails = Admin::where('id',$id)->first()->toArray();
             $modules=['categories','products','orders','users','subscribers'];
@@ -207,6 +311,9 @@ public  function updateSubAdminsStatus(Request $request)
 
     public  function UpdateRoleRequest(Request $request)
     {
+        if ($response = $this->ensureAdminRole()) {
+            return $response;
+        }
         if ($request->isMethod('post')) {
             $data = $request->all();
             $service = new AdminService();
@@ -214,5 +321,18 @@ public  function updateSubAdminsStatus(Request $request)
         }
         return redirect('admin/subAdmins')->with('success_message', $request['message']);
 
+    }
+
+    private function ensureAdminRole()
+    {
+        $admin = Auth::guard('admin')->user();
+        if (!$admin || $admin->role !== 'admin') {
+            if (request()->ajax()) {
+                return response()->json(['message' => 'Forbidden'], 403);
+            }
+            return redirect()->route('dashboard.index')
+                ->with('error_message', 'You do not have permission to access this page.');
+        }
+        return null;
     }
 }

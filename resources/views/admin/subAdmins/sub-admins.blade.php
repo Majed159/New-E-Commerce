@@ -96,19 +96,19 @@
                                             </td>
                                             <td>{{$subadmin->email}}</td>
                                             <td>
-
                                                 @if($subadmin->status == 1)
-                                                    <a class="updateSubadminStatus text-decoration-none" data-subadmin_id="{{$subadmin->id}}" style="color: #3f6ed3" href="javascript:void(0)">
-                                                       <i class="fas fa-toggle-on" data-status="Active"></i>
-                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary updateSubadminStatus" data-subadmin_id="{{$subadmin->id}}" data-status="Active">
+                                                        Deactivate
+                                                    </button>
                                                 @else
-                                                    <a class="updateSubadminStatus text-decoration-none" data-subadmin_id="{{$subadmin->id}}" style="color: gray" href="javascript:void(0)">
-                                                        <i class="fas fa-toggle-off" data-status="Inactive"></i>
-                                                    </a>
-                                                @endif &nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <button type="button" class="btn btn-sm btn-success updateSubadminStatus" data-subadmin_id="{{$subadmin->id}}" data-status="Inactive">
+                                                        Activate
+                                                    </button>
+                                                @endif
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <a class="text-decoration-none" href="{{url('admin/add-edit-subadmin/'.$subadmin->id)}}"><i class="fas fa-edit"></i></a>&nbsp;&nbsp;&nbsp;
                                                     <a title="Set Permisssions for Sub-admin" href="{{url('admin/update-role/'.$subadmin->id)}}"><i class="fas fa-unlock"></i></a>&nbsp;
-                                                &nbsp;&nbsp;<a class="text-decoration-none" style='color: #3f6ed3;' title="Delete Subadmin" href="{{url('admin/delete-subadmin/'.$subadmin->id)}}"><i class="fas fa-trash"></i></a>
+                                                &nbsp;&nbsp;<a class="confirmDelete" data-id="{{$subadmin->id}}" name="Subadmin"  data-module="subadmin"  style='color: #3f6ed3;' title="Delete Subadmin" href="{{url('admin/delete-subadmin/'.$subadmin->id)}}"><i class="fas fa-trash"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach

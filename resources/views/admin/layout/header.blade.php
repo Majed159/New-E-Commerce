@@ -143,11 +143,17 @@
             <!--end::Fullscreen Toggle-->
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
+                @php
+                    $adminUser = Auth::guard('admin')->user();
+                    $avatarUrl = !empty($adminUser->image)
+                        ? asset('admin/images/photos/' . $adminUser->image)
+                        : (!empty($adminUser->avatar_url)
+                            ? $adminUser->avatar_url
+                            : asset('admin/images/user2-160x160.jpg'));
+                @endphp
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                     <img
-                        src="{{ !empty(Auth::guard('admin')->user()->image)
-                            ? asset('admin/images/photos/' . Auth::guard('admin')->user()->image)
-                            : asset('admin/images/user2-160x160.jpg') }}"
+                        src="{{ $avatarUrl }}"
                         class="user-image rounded-circle shadow"
                         alt="User Image"
                     />
@@ -157,9 +163,7 @@
                     <!--begin::User Image-->
                     <li class="user-header text-bg-primary">
                         <img
-                            src="{{ !empty(Auth::guard('admin')->user()->image)
-                                ? asset('admin/images/photos/' . Auth::guard('admin')->user()->image)
-                                : asset('admin/images/user2-160x160.jpg') }}"
+                            src="{{ $avatarUrl }}"
                             class="rounded-circle shadow"
                             alt="User Image"
                         />
