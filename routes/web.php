@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Category\CategoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -64,7 +65,14 @@ Route::prefix('admin')->group(function () {
         Route::post('delete-category-image',[CategoryController::class,'deleteCategoryImage']);
        Route::post('delete-sizechart-image',[CategoryController::class,'deleteSizechartImage']);
 
-        //Admin logout
+
+
+//    ==============================================================================================================
+//                      Product
+//    ==============================================================================================================
+        Route::resource('products', ProductController::class);
+        Route::post('update-product-status', [ProductController::class, 'updateProductStatus']);
+             //Admin logout
         Route::get('logout', [AdminController::class, 'destroy'])->name('admin.logout');
     });
 });

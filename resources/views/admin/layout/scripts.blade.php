@@ -255,6 +255,7 @@
         $("#Category").DataTable();
 
        $("#subadmins").DataTable();
+       $("#products").DataTable();
     });
 
 </script>

@@ -108,6 +108,31 @@ $(document).ready(function () {
         })
     });
 
+    $(document).on("click",".updateProductStatus",function (){
+        var status =$(this).find("i").data("status");
+        var product_id = $(this).data("product-id");
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:'post',
+            url:'/admin/update-product-status',
+            data:{status:status,product_id:product_id},
+            success:function (resp){
+                if (resp['status'] ==0){
+                    $("a[data-product-id='"+product_id+"']").html("<i class='fas fa-toggle-off' style='color: gray' data-status='Inactive'></i>");
+
+                }else if (resp['status'] ==1){
+                    $("a[data-product-id='"+product_id+"']").html("<i class='fas fa-toggle-on' style='color: #3f6ed3' data-status='Active'></i>");
+
+                }
+            },
+            error:function (){
+                alert("Error");
+            }
+        })
+    });
+
     $(document).on('click','#deleteCategoryImage',function (){
         if (confirm('Are you sure You want to remove this Category Image?')){
             var category_id =$(this).data('category-id');
@@ -159,25 +184,6 @@ $(document).ready(function () {
 
 
 
-    // $(".confirmDelete").click(function () {
-    //     var name = $(this).attr('name');
-    //     if (confirm('Are you Sure to Delete this '+name+'?')){
-    //         return true
-    //     }
-    //     return false
-    // });
-
-
-//
-// $(".confirmDelete").click(function (){
-//     Swal.fire(
-//         'Good Job!',
-//         'You clicked the button!',
-//         'success'
-//     );
-//     return false;
-
-    // })
 $(document).on("click",".confirmDelete",function (e){
     e.preventDefault();
     let button = $(this);

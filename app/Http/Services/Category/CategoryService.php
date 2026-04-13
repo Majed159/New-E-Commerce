@@ -3,7 +3,8 @@
 namespace App\Http\Services\Category;
 use App\Models\Category;
 use App\Models\AdminsRole;
-use Auth;
+
+use illuminate\Support\Facades\Auth;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 

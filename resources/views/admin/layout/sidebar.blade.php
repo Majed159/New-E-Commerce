@@ -79,7 +79,7 @@
                     <a href="#" class="nav-link active">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
-                            Category Management
+                            Main Management
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
@@ -88,13 +88,19 @@
                             <a href="{{url('admin/categories')}}"
                                class="nav-link {{(Session::get('page') == 'Category') ? 'active' : ''}}">
                                 <i class="nav-icon bi bi-house"></i>
-
                                 <p>Category </p>
                             </a>
                         </li>
 
-
+                        <li class="nav-item">
+                            <a href="{{url('admin/products')}}"
+                               class="nav-link {{(Session::get('page') == 'Products') ? 'active' : ''}}">
+                                <i class="nav-icon bi bi-house"></i>
+                                <p>Products </p>
+                            </a>
+                        </li>
                     </ul>
+
                 </li>
                 <li class="nav-item">
                     <a href="./generate/theme.html" class="nav-link">
