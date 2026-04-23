@@ -26,7 +26,7 @@
                             <div class="card-header">
                                 <h2 class="card-title">Categories</h2>
                                 @if($productsModule['edit_access'] == 1 || $productsModule['full_access'] ==1)
-                                    <a style="max-width: 150px; float: right; display: inline-block;" href="{{url('admin/products/create')}}" class="btn btn-primary">Add Product</a>@endif
+                                    <a style="max-width: 150px; float: right; display: inline-block;" href="{{route('products.create')}}" class="btn btn-primary">Add Product</a>@endif
 
                             </div>
                             <div class="card-body">
@@ -84,6 +84,9 @@
 
                                                     </a>
                                                 @endif&nbsp;
+                                                @endif
+                                                @if($productsModule['edit_access'] ==1 ||$productsModule['full_access'])
+                                                    <a href="{{url('admin/products/'.$product->id.'/edit')}}"><i class="fas fa-edit"></i></a>
                                                 @endif
                                                 @if($productsModule['full_access'] == 1)
                                                 <form action="{{route('products.destroy',$product->id)}}" method="POST" style="display: inline-block;">

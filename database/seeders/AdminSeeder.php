@@ -16,14 +16,17 @@ class AdminSeeder extends Seeder
     {
         $password = Hash::make('12345678');
         $admin = new Admin;
-        $admin->name = 'Admin';
+        $admin->name = 'Admin Majd';
         $admin->role = 'admin';
         $admin->phone = '0123456789';
         $admin->email ='admin@admin.com';
 
+
+
         $admin->password = $password;
         $admin->status = 1;
         $admin->save();
+
          $admin = new Admin();
          $admin->name = 'Sub Admin';
         $admin->role = 'Sub_Admin';
