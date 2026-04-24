@@ -1,5 +1,3 @@
-import Swal from "sweetalert2";
-
 $(document).ready(function () {
         $("#current_pwd").keyup(function () {
                 var current_pwd = $("#current_pwd").val();
@@ -186,37 +184,13 @@ $(document).ready(function () {
 
 
 
-$(document).on("click",".confirmDelete",function (e){
-    e.preventDefault();
-    let button = $(this);
-    let module = button.data("module");
-    let moduleid = button.data('id');
-    let form = button.closest('form');
-    let  redirectUrl = "/admin/delete-"+module+ "/"+ moduleid;
-    Swal.fire({
-            title:'Are you sure?',
-        text:"You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton:true,
-        confirmButtonColor:'#3085d6',
-        confirmButtonText:'Yes, delete it!'
-    }).then((result) =>{
-        if (result.isConfirmed){
-            if (form.length > 0){
-                form.submit();
-            }else {
-                window.location.href = redirectUrl;
-            }
-        }
-    })
-})
     $(document).on("click",".confirmDelete",function (e){
         e.preventDefault();
         let button = $(this);
         let module = button.data("module");
-        let moduuleid = button.data("id");
+        let moduleId = button.data("id");
         let form = button.closest("form");
-        let redirectUrl = "/admin/delete-"+module+"/"+moduuleid;
+        let redirectUrl = "/admin/delete-"+module+"/"+moduleId;
 
 
         Swal.fire({
@@ -238,7 +212,7 @@ $(document).on("click",".confirmDelete",function (e){
                     form.submit();
                 }else
                 {
-                    //USe redirect if no delete form persent
+                    // Use redirect if no delete form is present.
                     window.location.href  = redirectUrl;
                 }
             }

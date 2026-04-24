@@ -4,6 +4,7 @@ namespace App\Http\Services\Product;
 use App\Models\AdminsRole;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductsImage;
 use Illuminate\Support\Facades\Auth;
 
 class ProductService
@@ -112,30 +113,63 @@ class ProductService
         $product->product_video = $request->product_video ?? $product->product_video;
         $product->save();
 
+        if (!empty($data['product_images'])) {
+            //Ensure we have an array
+            $imageFiles = is_array($data['product_images'])
+                ? $data['product_images']
+                : explode(",", $data['product_images']);
+            $imageFiles = array_filter($imageFiles);
+
+            foreach ($imageFiles as $index => $filename) {
+                $sourcePath = public_path('temp/'.$filename);
+                $destinationPath = public_path('front/images/products/'.$filename);
+
+                if (file_exists($sourcePath)) {
+                    @copy($sourcePath, $destinationPath);
+                    @unlink($sourcePath);
+
+                }
+                ProductsImage::create([
+                    'product_id' => $product->id,
+                    'image'=> $filename,
+                    'sort_order'=> $index,
+                    'status'=> 1,
+                ]);
+            }
+
+        }
+
         return $product;
 
     }
     public function handleImageUpload($file)
     {
-        $destinationPath = public_path('front/images/products');
-        if (!is_dir($destinationPath)) {
-            mkdir($destinationPath, 0755, true);
-        }
-
-        $imageName= time().'.'.$file->getClientOriginalExtension();
-        $file->move($destinationPath, $imageName);
+//        $destinationPath = public_path('front/images/products');
+//        if (!is_dir($destinationPath)) {
+//            mkdir($destinationPath, 0755, true);
+//        }
+//
+//        $imageName= time().'.'.$file->getClientOriginalExtension();
+//        $file->move($destinationPath, $imageName);
+//        return $imageName;
+        $imageName = time().'.'. rand(1111,9999).'.'. $file->getClientOriginalExtension();
+        $file->move(public_path('front/images/products'), $imageName);
         return $imageName;
     }
 
     public function handleVideoUpload($file){
-    $destinationPath = public_path('front/videos/products');
-    if (!is_dir($destinationPath)) {
-        mkdir($destinationPath, 0755, true);
-    }
+//    $destinationPath = public_path('front/videos/products');
+//    if (!is_dir($destinationPath)) {
+//        mkdir($destinationPath, 0755, true);
+//    }
+//
+//    $videoName= time().'.'.$file->getClientOriginalExtension();
+//    $file->move($destinationPath, $videoName);
+//    return $videoName;
 
-    $videoName= time().'.'.$file->getClientOriginalExtension();
-    $file->move($destinationPath, $videoName);
-    return $videoName;
+        $videoName = time().'.'. $file->getClientOriginalExtension();
+        $file->move(public_path('front/videos/products'), $videoName);
+        return $videoName;
     }
 
     public function deleteProductMainImage($id)
@@ -162,6 +196,52 @@ class ProductService
 
 
     }
+
+
+    public function deleteProductImage($id)
+    {
+        //GEt PRoduct main image
+
+        $product = ProductsImage::select('image')->where('id', $id)->first();
+        if (!$product || empty($product->image)) {
+            return "No image found";
+
+        }
+
+        $image_path = public_path('front/images/products/'.$product->image);
+
+        //delete product main
+        if (file_exists($image_path)) {
+            unlink($image_path);
+        }
+
+        //delete product video name form product table
+        ProductsImage::where('id', $id)->delete();
+        $message = "Product main image has been deleted successfully";
+        return $message;
+
+
+    }
+
+    public function deleteTempImage(string $filename): bool
+    {
+        $paths = [
+            public_path('temp/'.$filename),
+            public_path('front/images/products/'.$filename),
+        ];
+
+        $deleted = false;
+
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                unlink($path);
+                $deleted = true;
+            }
+        }
+
+        return $deleted;
+    }
+
     public function deleteProductVideo($id)
     {
         $productVideo = Product::select('product_video')->where('id', $id)->first();
@@ -180,9 +260,7 @@ class ProductService
         return $message;
     }
 
-    public function validate(array $array)
-    {
-    }
+
 
 
 }

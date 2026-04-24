@@ -33,7 +33,7 @@ class ProductController extends Controller
 
         ]);
     }
-
+//The Main status
     public  function updateProductStatus(Request $request)
     {
         if ($request->ajax()) {
@@ -42,6 +42,8 @@ class ProductController extends Controller
             return response()->json(['status' => $status,'product_id' => $data['product_id']]);
         }
     }
+
+    //Image Section
 public function uploadImage (Request $request)
 {
     if ($request->hasFile('file')) {
@@ -52,6 +54,53 @@ public function uploadImage (Request $request)
     return response()->json(['error' => 'No file was uploaded.'],400);
 }
 
+    public function deleteProductMainImage  ($id)
+    {
+        $service = new ProductService();
+        $message = $service->deleteProductMainImage($id);
+        return redirect()->back()->with('success_message', $message);
+
+    }
+
+    public  function uploadImages(Request $request)
+    {
+        if ($request->hasFile('file')) {
+            $fileName = $this->productService->handleImageUpload($request->file('file'));
+            return response()->json(['fileName' => $fileName]);
+        }
+        $file = $request->file('file');
+
+        $file->move(public_path('temp'),$filename);
+        return response()->json([
+            'fileName' => $filename,
+            'success' => true
+        ]);
+
+
+
+    }
+    public function deleteProductImage($id)
+    {
+        $message = $this->productService->deleteProductImage($id);
+        return redirect()->back()->with('success_message', $message);
+    }
+
+    public function deleteTempImage(Request $request)
+    {
+        $request->validate([
+            'filename' => ['required', 'string'],
+        ]);
+
+        $deleted = $this->productService->deleteTempImage($request->string('filename')->toString());
+
+        return response()->json([
+            'status' => $deleted,
+            'message' => $deleted ? 'Image removed successfully.' : 'Image file was not found.',
+        ]);
+    }
+
+
+    // Video Section
     public function uploadVideo  (Request $request)
     {
     if ($request->hasFile('file')) {
@@ -63,23 +112,19 @@ public function uploadImage (Request $request)
     }
 
 
-    public function deleteProductMainImage  ($id)
-    {
-        $service = new ProductService();
-        $message = $service->deleteProductMainImage($id);
-        return redirect('/admin/products')->with('success_message', $message);
 
-    }
 
 
     public function deleteProductVideo($id)
     {
     $message = $this->productService->deleteProductVideo($id);
-    return redirect('/admin/products')->with('success_message', $message);
+    return redirect()->back()->with('success_message', $message);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+
+
+
+
+// The Main process section
     public function create()
     {
         return view('admin.Product.create_edit_product', [
@@ -87,6 +132,8 @@ public function uploadImage (Request $request)
             'title' => 'Add Product',
         ]);
     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -130,11 +177,11 @@ public function uploadImage (Request $request)
      */
     public function edit(string $id)
     {
-        return view('admin.Product.create_edit_product', [
-            'product' => Product::findOrFail($id),
-            'getCategories' => Category::getCategories('Admin'),
-            'title' => 'Edit Product',
-        ]);
+        $title = "Edit Product";
+        $product = Product::with('product_images')->findOrFail($id);
+        $getCategories = Category::getCategories('Admin');
+        return view('admin.Product.create_edit_product', compact('title', 'product', 'getCategories'))
+            ;
     }
 
     /**
