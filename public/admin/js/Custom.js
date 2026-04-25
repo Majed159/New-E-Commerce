@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    //Add
         $("#current_pwd").keyup(function () {
                 var current_pwd = $("#current_pwd").val();
                     if (!current_pwd) {

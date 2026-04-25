@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('products_attributes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('products_id')->constrained()->cascadeOnDelete();
+            $table->string('size');
+            $table->string('sku')->unique();
+            $table->decimal('price',10,2);
+            $table->unsignedInteger('stock');
+            $table->unsignedInteger('sort_order')->default(0);
+            $table->tinyInteger('status')->default(1)->comment('1: Active, 0: Inactive');
+
             $table->timestamps();
         });
     }
